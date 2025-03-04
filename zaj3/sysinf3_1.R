@@ -1,0 +1,56 @@
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(ggplot2)
+
+process_text <- function(file_path) {
+  # Wczytanie tekstu z pliku
+  text <- tolower(readLines(file_path, encoding = "UTF-8"))
+  # Usuniêcie znaków interpunkcyjnych i cyfr
+  text <- removePunctuation(text)
+  text <- removeNumbers(text)
+  # Usuniêcie stop s³ów angielskich
+  text <- removeWords(text, stopwords("en"))
+  # Podzia³ tekstu na s³owa
+  words <- unlist(strsplit(text, "\\s+"))
+  # Usuniêcie pustych elementów
+  words <- words[words != ""]
+  return(words)
+  
+}
+
+word_frequency <- function(words) {
+  freq <- table(words)
+  freq_df <- data.frame(word = names(freq), freq = as.numeric(freq))
+  freq_df <- freq_df[order(-freq_df$freq), ]
+  return(freq_df)
+}
+
+plot_wordcloud <- function(freq_df, title, color_palette = "Dark2") {
+  wordcloud(words = freq_df$word, freq = freq_df$freq, min.freq = 16,
+            colors = brewer.pal(8, color_palette))
+  title(title)
+}
+custom_stopwords <- c("—", "–", "’s", "’re")
+file_paths <- c("C:\\Users\\tg458888\\Desktop\\notatki sysinf\\notatki\\zaj3\\Biden2021.txt", "C:\\Users\\tg458888\\Desktop\\notatki sysinf\\notatki\\zaj3\\Biden2024.txt")
+
+for (file_path in file_paths) {
+  # Wczytanie i przetworzenie tekstu
+  words <- process_text(file_path)
+  
+  # Usuniêcie dodatkowych stop s³ów z przetworzonego tekstu
+  # za pomoc¹ indeksowania logicznego
+  words <- words[!words %in% custom_stopwords]
+  
+  # Obliczenie czêstoœci wystêpowania s³ów
+  freq_df <- word_frequency(words)
+  
+  # Tworzenie chmury s³ów
+  plot_wordcloud(freq_df, paste("Chmura s³ów -", file_path), "Dark2")
+  
+  # Wyœwietlenie 10 najczêœciej wystêpuj¹cych s³ów
+  cat("Najczêœciej wystêpuj¹ce s³owa w pliku", file_path, ":\n")
+  print(head(freq_df, 10))
+  cat("\n")
+}
+
