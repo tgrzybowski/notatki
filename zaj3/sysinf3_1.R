@@ -3,6 +3,7 @@ library(wordcloud)
 library(RColorBrewer)
 library(ggplot2)
 
+
 process_text <- function(file_path) {
   # Wczytanie tekstu z pliku
   text <- tolower(readLines(file_path, encoding = "UTF-8"))
@@ -32,7 +33,7 @@ plot_wordcloud <- function(freq_df, title, color_palette = "Dark2") {
   title(title)
 }
 custom_stopwords <- c("—", "–", "’s", "’re")
-file_paths <- c("C:\\Users\\tg458888\\Desktop\\notatki sysinf\\notatki\\zaj3\\Biden2021.txt", "C:\\Users\\tg458888\\Desktop\\notatki sysinf\\notatki\\zaj3\\Biden2024.txt")
+file_paths <- c("Biden2021.txt", "Biden2024.txt")
 
 for (file_path in file_paths) {
   # Wczytanie i przetworzenie tekstu
